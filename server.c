@@ -23,7 +23,6 @@ int main()
     server_socket.sin_addr.s_addr = htonl(INADDR_ANY);
     server_socket.sin_port = htons(SERVER_PORT);
     signal(SIGCHLD,sig_chld);
-
     bind(listen_fd, (struct sockaddr*)&server_socket, sizeof(server_socket));
 
     listen(listen_fd, LISTEN_QUEUE);
@@ -35,19 +34,6 @@ int main()
         int pid;
         int sockaddr_len = sizeof(client_socket);
         int connection_fd = accept(listen_fd, (struct sockaddr*)&client_socket, &sockaddr_len);
-        if(connection_fd < 0)
-        {
-            /* A signal was caught by the process while it was blocked in accept.
-             * Continue after waking up!
-             */
-            if(errno == EINTR)
-                continue;
-            else
-            {
-               printf("accept error");
-               exit(1);
-            }
-        }
         if( (pid = fork()) == 0 ) 
         {
             //child process
