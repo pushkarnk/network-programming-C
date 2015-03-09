@@ -4,11 +4,12 @@
 #include<strings.h>
 #include<stdlib.h>
 #include<string.h>
+#include<signal.h>
 
 #define SERVER_PORT 12345 
 
 void str_cli(FILE*, int);
-
+void sig_pipe(int signo);
 int main( int argc, char * argv[] )
 {
  
@@ -19,6 +20,7 @@ int main( int argc, char * argv[] )
     }
 
     int socket_fd = socket(AF_INET, SOCK_STREAM,0);
+    signal(SIGPIPE,sig_pipe);
  
     struct sockaddr_in server_socket;    
     bzero(&server_socket, sizeof(server_socket)); 
@@ -50,4 +52,9 @@ void str_cli(FILE * fp, int sockfd)
         fputs(recvline,stdout);
         bzero(recvline,MAXLINE);
     }
+}
+void sig_pipe(int signo)
+{
+    printf("Broken pipe\n");
+    exit(1);
 }
